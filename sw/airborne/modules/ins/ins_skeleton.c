@@ -31,6 +31,10 @@
 
 #include "state.h"
 
+#ifndef USE_INS_NAV_INIT
+#define USE_INS_NAV_INIT TRUE
+PRINT_CONFIG_MSG("USE_INS_NAV_INIT defaulting to TRUE")
+#endif
 
 /*
  * ABI bindings
@@ -148,7 +152,7 @@ void ins_reset_local_origin(void)
 void ins_module_wrapper_init(void)
 {
 #if USE_INS_NAV_INIT
-  ins_init_origin_from_flightplan();
+  ins_init_origin_i_from_flightplan(&ins_module.ltp_def);
   ins_module.ltp_initialized = true;
 #else
   ins_module.ltp_initialized  = false;
