@@ -35,6 +35,7 @@ SRC_MODULES=modules
 
 CFG_SHARED=$(PAPARAZZI_SRC)/conf/firmwares/subsystems/shared
 
+VPATH += $(PAPARAZZI_HOME)/var/share
 
 #
 # common test
@@ -70,7 +71,7 @@ endif
 
 # pprz downlink/datalink
 COMMON_TELEMETRY_CFLAGS = -DDOWNLINK -DDOWNLINK_TRANSPORT=pprz_tp -DDATALINK=PPRZ
-COMMON_TELEMETRY_SRCS   = subsystems/datalink/downlink.c subsystems/datalink/pprz_transport.c
+COMMON_TELEMETRY_SRCS   = subsystems/datalink/downlink.c pprzlink/src/pprz_transport.c
 
 # check if we are using UDP
 ifneq (,$(findstring UDP, $(MODEM_DEV)))
@@ -227,6 +228,23 @@ test_telemetry.srcs   += $(COMMON_TEST_SRCS)
 test_telemetry.CFLAGS += $(COMMON_TELEMETRY_CFLAGS)
 test_telemetry.srcs   += $(COMMON_TELEMETRY_SRCS)
 test_telemetry.srcs   += test/test_telemetry.c
+
+#
+# test_datalink : Sends ALIVE and pong telemetry messages
+#
+# configuration
+#   MODEM_PORT :
+#   MODEM_BAUD :
+#
+test_datalink.ARCHDIR = $(ARCH)
+test_datalink.CFLAGS += $(COMMON_TEST_CFLAGS)
+test_datalink.srcs   += $(COMMON_TEST_SRCS)
+test_datalink.CFLAGS += $(COMMON_DATALINK_CFLAGS)
+test_datalink.CFLAGS += $(COMMON_TELEMETRY_CFLAGS)
+test_datalink.srcs   += $(COMMON_DATALINK_SRCS)
+test_datalink.srcs   += $(COMMON_TELEMETRY_SRCS)
+test_datalink.srcs   += test/test_datalink.c
+
 
 #
 # test_math_trig_compressed: Test math trigonometric using compressed data

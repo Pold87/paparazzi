@@ -28,7 +28,7 @@
 
 #define SDLOGGER_BUFFER_SIZE 128
 
-#include "mcu_periph/link_device.h"
+#include "pprzlink/pprzlink_device.h"
 #include "peripherals/sdcard_spi.h"
 
 enum SDLoggerStatus {
@@ -72,7 +72,7 @@ extern void sdlogger_spi_direct_index_received(void);
 extern void sdlogger_spi_direct_multiwrite_written(void);
 extern void sdlogger_spi_direct_command(void);
 
-extern bool_t sdlogger_spi_direct_check_free_space(struct sdlogger_spi_periph *p, uint8_t len);
+extern bool sdlogger_spi_direct_check_free_space(struct sdlogger_spi_periph *p, uint8_t len);
 extern void sdlogger_spi_direct_put_byte(struct sdlogger_spi_periph *p, uint8_t data);
 extern void sdlogger_spi_direct_send_message(void *p);
 extern int sdlogger_spi_direct_char_available(void *p);

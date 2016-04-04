@@ -30,7 +30,7 @@
 
 #include "ff.h"
 #include "subsystems/chibios-libopencm3/sdLog.h"
-#include "mcu_periph/link_device.h"
+#include "pprzlink/pprzlink_device.h"
 
 /*
  what to be done  :
@@ -46,8 +46,8 @@ extern FileDes pprzLogFile;
 extern FileDes flightRecorderLogFile;
 #endif
 
-extern bool_t chibios_logInit(void);
-extern void chibios_logFinish(bool_t flush);
+extern bool chibios_logInit(void);
+extern void chibios_logFinish(bool flush);
 
 struct chibios_sdlog {
   FileDes *file;

@@ -38,7 +38,7 @@
 
 // Downlink
 #include "mcu_periph/uart.h"
-#include "messages.h"
+#include "pprzlink/messages.h"
 #include "subsystems/datalink/downlink.h"
 
 
@@ -117,7 +117,7 @@ void imu_hbmini_event(void)
     imu.mag_unscaled.y = imu_hbmini.hmc.data.value[IMU_MAG_Y_CHAN];
     imu.mag_unscaled.x = imu_hbmini.hmc.data.value[IMU_MAG_Z_CHAN];
 
-    imu_hbmini.hmc.data_available = FALSE;
+    imu_hbmini.hmc.data_available = false;
     imu_scale_mag(&imu);
     AbiSendMsgIMU_MAG_INT32(IMU_BOARD_ID, now_ts, &imu.mag);
   }

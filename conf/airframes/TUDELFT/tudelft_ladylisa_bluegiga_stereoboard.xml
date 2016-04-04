@@ -28,7 +28,7 @@
      radio="radios/cockpitSX.xml"
      telemetry="telemetry/default_rotorcraft.xml"
      flight_plan="flight_plans/rotorcraft_basic.xml"
-     settings="settings/rotorcraft_basic.xml settings/control/rotorcraft_guidance.xml settings/control/stabilization_att_int.xml settings/control/stabilization_rate.xml"
+     settings="settings/rotorcraft_basic.xml settings/control/rotorcraft_guidance.xml settings/control/stabilization_att_int.xml"
 -->
 
 <airframe name="quadrotor_lisa_s">
@@ -93,19 +93,6 @@
     <define name="MAX_BAT_LEVEL" value="4.1" unit="V"/>
  </section>
 
-  <section name="STABILIZATION_RATE" prefix="STABILIZATION_RATE_">
-    <define name="SP_MAX_P" value="210" unit="deg/s"/>
-    <define name="SP_MAX_Q" value="210" unit="deg/s"/>
-    <define name="SP_MAX_R" value="210" unit="deg/s"/>
-
-    <define name="GAIN_P" value="400"/>
-    <define name="GAIN_Q" value="400"/>
-    <define name="GAIN_R" value="418"/>
-
-    <define name="IGAIN_P" value="301"/>
-    <define name="IGAIN_Q" value="302"/>
-    <define name="IGAIN_R" value="303"/>
-  </section>
 
   <section name="STABILIZATION_ATTITUDE" prefix="STABILIZATION_ATTITUDE_">
 
@@ -181,14 +168,14 @@
     <define name="H_X" value="0.39049610"/>
     <define name="H_Y" value="0.00278894"/>
     <define name="H_Z" value="0.92060036"/>
-    <define name="USE_GPS_HEADING" value="1"/>
+    <define name="USE_GPS_HEADING" value="0"/>
   </section>
-<define name="USE_GPS" value="FALSE"/>
- <define name="USE_GPS_HEADING" value="FALSE"/>
+
+
 
  <section name="GUIDANCE_H" prefix="GUIDANCE_H_">
-   <define name="PGAIN" value="40"/>
-   <define name="DGAIN" value="10"/>
+   <define name="PGAIN" value="120"/>
+   <define name="DGAIN" value="40"/>
    <define name="IGAIN" value="0"/>
    <define name="REF_MAX_SPEED" value="0.5"/>
    <define name="USE_REF" value="FALSE"/>
@@ -214,6 +201,7 @@
    <load name="stereocam.xml">
      <configure name="STEREO_UART" value="UART1"/>
      <configure name="STEREO_BAUD" value="B115200"/>
+     <define name="SEND_STEREO" value="FALSE"/>
    </load>
    <load name="stereocam_stereocam2state.xml"/>
  </modules>
@@ -251,6 +239,8 @@
     <subsystem name="gps" type="datalink"/>
     <subsystem name="stabilization" type="int_quat"/>
     <subsystem name="ahrs" type="int_cmpl_quat"/>
-    <subsystem name="ins" />
+    <subsystem name="ins">
+       <define name="INS_INT_GPS_ID" value="ABI_DISABLE"/>
+    </subsystem>
   </firmware>
 </airframe>

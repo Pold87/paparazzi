@@ -236,7 +236,7 @@ void uart_periph_init(struct uart_periph *p)
   p->rx_extract_idx = 0;
   p->tx_insert_idx = 0;
   p->tx_extract_idx = 0;
-  p->tx_running = FALSE;
+  p->tx_running = false;
   p->ore = 0;
   p->ne_err = 0;
   p->fe_err = 0;
@@ -246,6 +246,7 @@ void uart_periph_init(struct uart_periph *p)
   p->device.send_message = (send_message_t)null_function;
   p->device.char_available = (char_available_t)uart_char_available;
   p->device.get_byte = (get_byte_t)uart_getch;
+  p->device.set_baudrate = (set_baudrate_t)uart_periph_set_baudrate;
 
 #if PERIODIC_TELEMETRY
   // the first to register do it for the others
@@ -253,7 +254,7 @@ void uart_periph_init(struct uart_periph *p)
 #endif
 }
 
-bool_t uart_check_free_space(struct uart_periph *p, uint8_t len)
+bool uart_check_free_space(struct uart_periph *p, uint8_t len)
 {
   int16_t space = p->tx_extract_idx - p->tx_insert_idx;
   if (space <= 0) {

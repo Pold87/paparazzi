@@ -30,7 +30,7 @@
 #define PERIODIC_C_LOGGER
 
 #include "modules/loggers/sdlogger_spi_direct.h"
-#include "subsystems/datalink/pprzlog_transport.h"
+#include "subsystems/datalink/downlink.h"
 #include "subsystems/datalink/telemetry.h"
 #include "subsystems/radio_control.h"
 #include "led.h"
@@ -95,8 +95,6 @@ void sdlogger_spi_direct_init(void)
   sdlogger_spi.device.get_byte = (get_byte_t)sdlogger_spi_direct_get_byte;
   sdlogger_spi.device.periph = &sdlogger_spi;
 
-  /* Init pprzlog_tp */
-  pprzlog_transport_init();
 }
 
 /**
@@ -346,15 +344,15 @@ void sdlogger_spi_direct_command(void)
   sdlogger_spi.command = 0;
 }
 
-bool_t sdlogger_spi_direct_check_free_space(struct sdlogger_spi_periph *p, uint8_t len)
+bool sdlogger_spi_direct_check_free_space(struct sdlogger_spi_periph *p, uint8_t len)
 {
   if (p->status == SDLogger_Logging) {
     /* Calculating free space in both buffers */
     if ( (513 - p->sdcard_buf_idx) + (SDLOGGER_BUFFER_SIZE - p->idx) >= len) {
-      return TRUE;
+      return true;
     }
   }
-  return FALSE;
+  return false;
 }
 
 void sdlogger_spi_direct_put_byte(struct sdlogger_spi_periph *p, uint8_t data)
