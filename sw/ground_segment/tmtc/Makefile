@@ -46,7 +46,7 @@ all: link server messages settings dia diadec ivy_tcp_aircraft ivy_tcp_controlle
 opt: server.opt
 
 clean:
-	$(Q)rm -f link server messages settings dia diadec *.bak *~ core *.o .depend *.opt *.out *.cm* ivy_tcp_aircraft ivy_tcp_controller broadcaster ivy2udp ivy_serial_bridge app_server gpsd2ivy c_ivy_client_example_1 c_ivy_client_example_2 c_ivy_client_example_3 ivy2nmea
+	$(Q)rm -f link server messages settings dia diadec *.bak *~ core *.o .depend *.opt *.out *.cm* ivy_tcp_aircraft ivy_tcp_controller broadcaster ivy2udp ivy_serial_bridge app_server gpsd2ivy c_ivy_client_example_1 c_ivy_client_example_2 c_ivy_client_example_3 vps_visualizer ivy2nmea
 
 messages : messages.cmo $(LIBPPRZCMA)
 	@echo OL $@
@@ -157,6 +157,11 @@ c_ivy_client_example_2: c_ivy_client_example_2.c
 
 c_ivy_client_example_3: c_ivy_client_example_3.c
 	$(CC) $(GLIBIVY_CFLAGS) $(GTK_CFLAGS) -o $@ $< $(GLIBIVY_LDFLAGS) $(GTK_LDFLAGS)
+
+
+vps_visualizer: vps_visualizer.c
+	$(CC) $(GLIBIVY_CFLAGS) -o $@ $< $(GLIBIVY_LDFLAGS) -I/home/pold/paparazzi/sw/airborne/modules/particle_filter/src/ /home/pold/paparazzi/sw/airborne/modules/particle_filter/src/particle_filter.c /home/pold/paparazzi/sw/airborne/modules/particle_filter/src/random_number_gen.c -lm
+
 
 ivy_serial_bridge: ivy_serial_bridge.c
 	@echo OL $@
