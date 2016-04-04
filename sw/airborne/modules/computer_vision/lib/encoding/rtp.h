@@ -29,7 +29,7 @@
 #define _CV_ENCODING_RTP_H
 
 #include "std.h"
-#include "lib/vision/image.h"
+#include "../vision/image.h"
 #include "udp_socket.h"
 
 void rtp_frame_send(struct UdpSocket *udp, struct image_t *img, uint8_t format_code, uint8_t quality_code,

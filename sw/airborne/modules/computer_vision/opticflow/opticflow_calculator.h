@@ -44,9 +44,11 @@ struct opticflow_t {
 
   uint8_t max_track_corners;        ///< Maximum amount of corners Lucas Kanade should track
   uint16_t window_size;             ///< Window size of the Lucas Kanade calculation (needs to be even)
-  uint8_t subpixel_factor;          ///< The amount of subpixels per pixel
+  uint32_t subpixel_factor;          ///< The amount of subpixels per pixel
   uint8_t max_iterations;           ///< The maximum amount of iterations the Lucas Kanade algorithm should do
   uint8_t threshold_vec;            ///< The threshold in x, y subpixels which the algorithm should stop
+
+  uint8_t pyramid_level;            ///< Pyramid level of Lucas-Kanade
 
   bool_t fast9_adaptive;            ///< Whether the FAST9 threshold should be adaptive
   uint8_t fast9_threshold;          ///< FAST9 corner detection threshold

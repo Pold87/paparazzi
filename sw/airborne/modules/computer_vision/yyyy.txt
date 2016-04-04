@@ -1,0 +1,3 @@
+ls
+ls
+send /home/pold/paparazzi/sw/airborne/modules/computer_vision/textons.csv paparazzi/text2.csv

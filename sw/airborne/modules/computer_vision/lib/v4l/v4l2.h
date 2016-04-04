@@ -33,7 +33,8 @@
 #include <sys/time.h>
 
 #include "std.h"
-#include "modules/computer_vision/lib/vision/image.h"
+/*#include "modules/computer_vision/lib/vision/image.h"*/
+#include "../vision/image.h"
 
 #define V4L2_IMG_NONE 255  ///< There currently no image available
 

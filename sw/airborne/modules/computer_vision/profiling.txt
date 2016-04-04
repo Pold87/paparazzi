@@ -1,0 +1,437 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 40.00      0.04     0.04        1    40.00    40.00  v4l2_image_get
+ 30.00      0.07     0.03    99000     0.00     0.00  euclidean_dist
+ 20.00      0.09     0.02      534     0.04     0.04  csv_parse
+ 10.00      0.10     0.01        2     5.00     5.00  calculate_edge_histogram
+  0.00      0.10     0.00   234400     0.00     0.00  fmin
+  0.00      0.10     0.00   232400     0.00     0.00  fmax
+  0.00      0.10     0.00   230400     0.00     0.00  clamp
+  0.00      0.10     0.00   188100     0.00     0.00  cb_write_to_int_arr
+  0.00      0.10     0.00     9001     0.00     0.00  init
+  0.00      0.10     0.00     7734     0.00     0.00  cb_write_to_position_arr
+  0.00      0.10     0.00     7001     0.00     0.00  randu
+  0.00      0.10     0.00     4131     0.00     0.00  cb_end_of_line
+  0.00      0.10     0.00     4001     0.00     0.00  normpdf
+  0.00      0.10     0.00     3000     0.00     0.00  extract_one_patch
+  0.00      0.10     0.00     3000     0.00     0.01  label_image_patch
+  0.00      0.10     0.00     2673     0.00     0.00  cb_write_to_double_arr
+  0.00      0.10     0.00     2000     0.00     0.00  randn
+  0.00      0.10     0.00     1900     0.00     0.00  euclidean_dist_int
+  0.00      0.10     0.00      440     0.00     0.00  getMinimum
+  0.00      0.10     0.00        5     0.00     0.00  csv_fini
+  0.00      0.10     0.00        5     0.00     0.00  csv_free
+  0.00      0.10     0.00        5     0.00     0.00  csv_increase_buffer
+  0.00      0.10     0.00        5     0.00     0.00  csv_init
+  0.00      0.10     0.00        5     0.00     4.00  read_csv_into_array
+  0.00      0.10     0.00        4     0.00     0.00  image_create
+  0.00      0.10     0.00        2     0.00     0.00  calculate_edge_displacement
+  0.00      0.10     0.00        2     0.00     0.00  image_free
+  0.00      0.10     0.00        2     0.00     0.00  line_fit
+  0.00      0.10     0.00        2     0.00     4.00  read_weights_from_csv
+  0.00      0.10     0.00        2     0.00     0.00  timeval_diff2
+  0.00      0.10     0.00        1     0.00     0.00  RGBtoOpponent
+  0.00      0.10     0.00        1     0.00     0.00  YUV422toRGB
+  0.00      0.10     0.00        1     0.00     0.00  array_max
+  0.00      0.10     0.00        1     0.00    10.00  edgeflow_calc_frame
+  0.00      0.10     0.00        1     0.00    30.00  get_texton_histogram
+  0.00      0.10     0.00        1     0.00     0.00  init_particles
+  0.00      0.10     0.00        1     0.00     0.00  make_histogram
+  0.00      0.10     0.00        1     0.00     0.00  opticflow_calc_init
+  0.00      0.10     0.00        1     0.00     0.00  particle_filter
+  0.00      0.10     0.00        1     0.00     0.00  predict_position
+  0.00      0.10     0.00        1     0.00     4.00  read_histograms_from_csv
+  0.00      0.10     0.00        1     0.00     4.00  read_positions_from_csv
+  0.00      0.10     0.00        1     0.00     0.00  read_predictions_from_csv
+  0.00      0.10     0.00        1     0.00     4.00  read_textons_from_csv
+  0.00      0.10     0.00        1     0.00     0.00  resampling_wheel
+  0.00      0.10     0.00        1     0.00     0.00  save_image
+  0.00      0.10     0.00        1     0.00    20.00  trexton_init
+  0.00      0.10     0.00        1     0.00    80.01  trexton_periodic
+  0.00      0.10     0.00        1     0.00     0.00  v4l2_image_free
+  0.00      0.10     0.00        1     0.00     0.00  v4l2_init
+  0.00      0.10     0.00        1     0.00     0.00  v4l2_start_capture
+  0.00      0.10     0.00        1     0.00     0.00  weighted_average
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 10.00% of 0.10 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.00    0.10                 main [1]
+                0.00    0.08       1/1           trexton_periodic [2]
+                0.00    0.02       1/1           trexton_init [9]
+-----------------------------------------------
+                0.00    0.08       1/1           main [1]
+[2]     80.0    0.00    0.08       1         trexton_periodic [2]
+                0.04    0.00       1/1           v4l2_image_get [3]
+                0.00    0.03       1/1           get_texton_histogram [6]
+                0.00    0.01       1/1           edgeflow_calc_frame [11]
+                0.00    0.00       2/4           image_create [34]
+                0.00    0.00       2/2           image_free [36]
+                0.00    0.00       1/1           YUV422toRGB [40]
+                0.00    0.00       1/1           RGBtoOpponent [39]
+                0.00    0.00       1/1           predict_position [46]
+                0.00    0.00       1/1           save_image [49]
+                0.00    0.00       1/1           particle_filter [45]
+                0.00    0.00       1/1           weighted_average [53]
+                0.00    0.00       1/1           v4l2_image_free [50]
+-----------------------------------------------
+                0.04    0.00       1/1           trexton_periodic [2]
+[3]     40.0    0.04    0.00       1         v4l2_image_get [3]
+-----------------------------------------------
+                0.03    0.00   99000/99000       label_image_patch [5]
+[4]     30.0    0.03    0.00   99000         euclidean_dist [4]
+-----------------------------------------------
+                0.00    0.03    3000/3000        get_texton_histogram [6]
+[5]     30.0    0.00    0.03    3000         label_image_patch [5]
+                0.03    0.00   99000/99000       euclidean_dist [4]
+-----------------------------------------------
+                0.00    0.03       1/1           trexton_periodic [2]
+[6]     30.0    0.00    0.03       1         get_texton_histogram [6]
+                0.00    0.03    3000/3000        label_image_patch [5]
+                0.00    0.00    3000/3000        extract_one_patch [25]
+                0.00    0.00       1/1           make_histogram [43]
+-----------------------------------------------
+                0.02    0.00     534/534         read_csv_into_array [8]
+[7]     20.0    0.02    0.00     534         csv_parse [7]
+                0.00    0.00  188100/188100      cb_write_to_int_arr [19]
+                0.00    0.00    7733/7734        cb_write_to_position_arr [21]
+                0.00    0.00    4130/4131        cb_end_of_line [23]
+                0.00    0.00    2673/2673        cb_write_to_double_arr [26]
+                0.00    0.00       5/5           csv_increase_buffer [32]
+-----------------------------------------------
+                0.00    0.00       1/5           read_textons_from_csv [15]
+                0.00    0.00       1/5           read_histograms_from_csv [13]
+                0.00    0.00       1/5           read_positions_from_csv [14]
+                0.00    0.01       2/5           read_weights_from_csv [12]
+[8]     20.0    0.00    0.02       5         read_csv_into_array [8]
+                0.02    0.00     534/534         csv_parse [7]
+                0.00    0.00       5/5           csv_init [33]
+                0.00    0.00       5/5           csv_fini [30]
+                0.00    0.00       5/5           csv_free [31]
+-----------------------------------------------
+                0.00    0.02       1/1           main [1]
+[9]     20.0    0.00    0.02       1         trexton_init [9]
+                0.00    0.01       2/2           read_weights_from_csv [12]
+                0.00    0.00       1/1           read_textons_from_csv [15]
+                0.00    0.00       1/1           read_histograms_from_csv [13]
+                0.00    0.00       1/1           read_positions_from_csv [14]
+                0.00    0.00       1/1           opticflow_calc_init [44]
+                0.00    0.00       1/1           read_predictions_from_csv [47]
+                0.00    0.00       1/1           init_particles [42]
+                0.00    0.00       1/1           v4l2_init [51]
+                0.00    0.00       1/1           v4l2_start_capture [52]
+-----------------------------------------------
+                0.01    0.00       2/2           edgeflow_calc_frame [11]
+[10]    10.0    0.01    0.00       2         calculate_edge_histogram [10]
+-----------------------------------------------
+                0.00    0.01       1/1           trexton_periodic [2]
+[11]    10.0    0.00    0.01       1         edgeflow_calc_frame [11]
+                0.01    0.00       2/2           calculate_edge_histogram [10]
+                0.00    0.00       2/2           calculate_edge_displacement [35]
+                0.00    0.00       2/2           line_fit [37]
+                0.00    0.00       2/2           timeval_diff2 [38]
+-----------------------------------------------
+                0.00    0.01       2/2           trexton_init [9]
+[12]     8.0    0.00    0.01       2         read_weights_from_csv [12]
+                0.00    0.01       2/5           read_csv_into_array [8]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[13]     4.0    0.00    0.00       1         read_histograms_from_csv [13]
+                0.00    0.00       1/5           read_csv_into_array [8]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[14]     4.0    0.00    0.00       1         read_positions_from_csv [14]
+                0.00    0.00       1/5           read_csv_into_array [8]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[15]     4.0    0.00    0.00       1         read_textons_from_csv [15]
+                0.00    0.00       1/5           read_csv_into_array [8]
+-----------------------------------------------
+                0.00    0.00    4000/234400      particle_filter [45]
+                0.00    0.00  230400/234400      clamp [18]
+[16]     0.0    0.00    0.00  234400         fmin [16]
+-----------------------------------------------
+                0.00    0.00    2000/232400      particle_filter [45]
+                0.00    0.00  230400/232400      clamp [18]
+[17]     0.0    0.00    0.00  232400         fmax [17]
+-----------------------------------------------
+                0.00    0.00  230400/230400      YUV422toRGB [40]
+[18]     0.0    0.00    0.00  230400         clamp [18]
+                0.00    0.00  230400/232400      fmax [17]
+                0.00    0.00  230400/234400      fmin [16]
+-----------------------------------------------
+                0.00    0.00  188100/188100      csv_parse [7]
+[19]     0.0    0.00    0.00  188100         cb_write_to_int_arr [19]
+-----------------------------------------------
+                0.00    0.00    2000/9001        randn [27]
+                0.00    0.00    7001/9001        randu [22]
+[20]     0.0    0.00    0.00    9001         init [20]
+-----------------------------------------------
+                0.00    0.00       1/7734        csv_fini [30]
+                0.00    0.00    7733/7734        csv_parse [7]
+[21]     0.0    0.00    0.00    7734         cb_write_to_position_arr [21]
+-----------------------------------------------
+                0.00    0.00    1001/7001        resampling_wheel [48]
+                0.00    0.00    6000/7001        init_particles [42]
+[22]     0.0    0.00    0.00    7001         randu [22]
+                0.00    0.00    7001/9001        init [20]
+-----------------------------------------------
+                0.00    0.00       1/4131        csv_fini [30]
+                0.00    0.00    4130/4131        csv_parse [7]
+[23]     0.0    0.00    0.00    4131         cb_end_of_line [23]
+-----------------------------------------------
+                0.00    0.00    4001/4001        particle_filter [45]
+[24]     0.0    0.00    0.00    4001         normpdf [24]
+-----------------------------------------------
+                0.00    0.00    3000/3000        get_texton_histogram [6]
+[25]     0.0    0.00    0.00    3000         extract_one_patch [25]
+-----------------------------------------------
+                0.00    0.00    2673/2673        csv_parse [7]
+[26]     0.0    0.00    0.00    2673         cb_write_to_double_arr [26]
+-----------------------------------------------
+                0.00    0.00    2000/2000        particle_filter [45]
+[27]     0.0    0.00    0.00    2000         randn [27]
+                0.00    0.00    2000/9001        init [20]
+-----------------------------------------------
+                0.00    0.00    1900/1900        predict_position [46]
+[28]     0.0    0.00    0.00    1900         euclidean_dist_int [28]
+-----------------------------------------------
+                0.00    0.00     440/440         calculate_edge_displacement [35]
+[29]     0.0    0.00    0.00     440         getMinimum [29]
+-----------------------------------------------
+                0.00    0.00       5/5           read_csv_into_array [8]
+[30]     0.0    0.00    0.00       5         csv_fini [30]
+                0.00    0.00       1/7734        cb_write_to_position_arr [21]
+                0.00    0.00       1/4131        cb_end_of_line [23]
+-----------------------------------------------
+                0.00    0.00       5/5           read_csv_into_array [8]
+[31]     0.0    0.00    0.00       5         csv_free [31]
+-----------------------------------------------
+                0.00    0.00       5/5           csv_parse [7]
+[32]     0.0    0.00    0.00       5         csv_increase_buffer [32]
+-----------------------------------------------
+                0.00    0.00       5/5           read_csv_into_array [8]
+[33]     0.0    0.00    0.00       5         csv_init [33]
+-----------------------------------------------
+                0.00    0.00       2/4           trexton_periodic [2]
+                0.00    0.00       2/4           opticflow_calc_init [44]
+[34]     0.0    0.00    0.00       4         image_create [34]
+-----------------------------------------------
+                0.00    0.00       2/2           edgeflow_calc_frame [11]
+[35]     0.0    0.00    0.00       2         calculate_edge_displacement [35]
+                0.00    0.00     440/440         getMinimum [29]
+-----------------------------------------------
+                0.00    0.00       2/2           trexton_periodic [2]
+[36]     0.0    0.00    0.00       2         image_free [36]
+-----------------------------------------------
+                0.00    0.00       2/2           edgeflow_calc_frame [11]
+[37]     0.0    0.00    0.00       2         line_fit [37]
+-----------------------------------------------
+                0.00    0.00       2/2           edgeflow_calc_frame [11]
+[38]     0.0    0.00    0.00       2         timeval_diff2 [38]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_periodic [2]
+[39]     0.0    0.00    0.00       1         RGBtoOpponent [39]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_periodic [2]
+[40]     0.0    0.00    0.00       1         YUV422toRGB [40]
+                0.00    0.00  230400/230400      clamp [18]
+-----------------------------------------------
+                0.00    0.00       1/1           resampling_wheel [48]
+[41]     0.0    0.00    0.00       1         array_max [41]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[42]     0.0    0.00    0.00       1         init_particles [42]
+                0.00    0.00    6000/7001        randu [22]
+-----------------------------------------------
+                0.00    0.00       1/1           get_texton_histogram [6]
+[43]     0.0    0.00    0.00       1         make_histogram [43]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[44]     0.0    0.00    0.00       1         opticflow_calc_init [44]
+                0.00    0.00       2/4           image_create [34]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_periodic [2]
+[45]     0.0    0.00    0.00       1         particle_filter [45]
+                0.00    0.00    4001/4001        normpdf [24]
+                0.00    0.00    4000/234400      fmin [16]
+                0.00    0.00    2000/232400      fmax [17]
+                0.00    0.00    2000/2000        randn [27]
+                0.00    0.00       1/1           resampling_wheel [48]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_periodic [2]
+[46]     0.0    0.00    0.00       1         predict_position [46]
+                0.00    0.00    1900/1900        euclidean_dist_int [28]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[47]     0.0    0.00    0.00       1         read_predictions_from_csv [47]
+-----------------------------------------------
+                0.00    0.00       1/1           particle_filter [45]
+[48]     0.0    0.00    0.00       1         resampling_wheel [48]
+                0.00    0.00    1001/7001        randu [22]
+                0.00    0.00       1/1           array_max [41]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_periodic [2]
+[49]     0.0    0.00    0.00       1         save_image [49]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_periodic [2]
+[50]     0.0    0.00    0.00       1         v4l2_image_free [50]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[51]     0.0    0.00    0.00       1         v4l2_init [51]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_init [9]
+[52]     0.0    0.00    0.00       1         v4l2_start_capture [52]
+-----------------------------------------------
+                0.00    0.00       1/1           trexton_periodic [2]
+[53]     0.0    0.00    0.00       1         weighted_average [53]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [39] RGBtoOpponent          [25] extract_one_patch       [8] read_csv_into_array
+  [40] YUV422toRGB            [17] fmax                   [13] read_histograms_from_csv
+  [41] array_max              [16] fmin                   [14] read_positions_from_csv
+  [35] calculate_edge_displacement [29] getMinimum        [47] read_predictions_from_csv
+  [10] calculate_edge_histogram [6] get_texton_histogram  [15] read_textons_from_csv
+  [23] cb_end_of_line         [34] image_create           [12] read_weights_from_csv
+  [26] cb_write_to_double_arr [36] image_free             [48] resampling_wheel
+  [19] cb_write_to_int_arr    [20] init                   [49] save_image
+  [21] cb_write_to_position_arr [42] init_particles       [38] timeval_diff2
+  [18] clamp                   [5] label_image_patch       [9] trexton_init
+  [30] csv_fini               [37] line_fit                [2] trexton_periodic
+  [31] csv_free               [43] make_histogram         [50] v4l2_image_free
+  [32] csv_increase_buffer    [24] normpdf                 [3] v4l2_image_get
+  [33] csv_init               [44] opticflow_calc_init    [51] v4l2_init
+   [7] csv_parse              [45] particle_filter        [52] v4l2_start_capture
+  [11] edgeflow_calc_frame    [46] predict_position       [53] weighted_average
+   [4] euclidean_dist         [27] randn
+  [28] euclidean_dist_int     [22] randu
