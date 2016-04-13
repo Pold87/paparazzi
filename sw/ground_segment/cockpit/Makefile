@@ -31,9 +31,9 @@ INCLUDES=
 LIBS=
 LIBSX=$(LIBS:.cma=.cmxa)
 
-INCLUDES= -I ../multimon
-PKG = -package pprz.xlib
-LINKPKG = $(PKG) -linkpkg -dllpath-pkg pprz.xlib
+INCLUDES=
+PKG = -package pprzlink,pprz.xlib
+LINKPKG = $(PKG) -linkpkg -dllpath-pkg pprz.xlib,pprzlink
 
 LABLGTK2INIT = $(shell ocamlfind query -p-format lablgtk2.init 2>/dev/null)
 ifeq ($(LABLGTK2INIT),)
@@ -64,11 +64,11 @@ all : $(MAIN)
 
 opt : $(MAIN).opt
 
-$(MAIN) : $(CMO) $(LIBPPRZCMA) $(XLIBPPRZCMA)
+$(MAIN) : $(CMO) $(LIBPPRZCMA) $(LIBPPRZLINKCMA) $(XLIBPPRZCMA)
 	@echo OL $@
 	$(Q)$(OCAMLC) $(OCAMLCFLAGS) $(INCLUDES) $(LIBS) $(LINKPKG) $(CMO) -o $@
 
-$(MAIN).opt : $(CMX) $(LIBPPRZCMXA) $(XLIBPPRZCMXA)
+$(MAIN).opt : $(CMX) $(LIBPPRZCMXA) $(LIBPPRZLINKCMXA) $(XLIBPPRZCMXA)
 	@echo OOL $@
 	$(Q)$(OCAMLOPT) $(OCAMLCFLAGS) $(INCLUDES) $(LIBSX) -package pprz.xlib,$(LABLGTK2INIT) -linkpkg $(CMX) -o $@
 
@@ -114,14 +114,14 @@ compass : compass.ml
 
 
 clean:
-	$(Q)rm -f *~* *.cm* *.o *.out *.opt map2d gcs .depend gtk_strip.ml gtk_setting_time.ml gtk_save_settings.ml compass ant_track ant_track_pmm test_enose actuators
+	$(Q)rm -f *~* *.cm* *.o *.out *.opt map2d gcs .depend gtk_strip.ml gtk_setting_time.ml gtk_save_settings.ml compass ant_track ant_track_pmm actuators
 
 .PHONY: all opt clean
 
 
 CC = gcc
 CFLAGS=-g -O2 -Wall $(shell pkg-config gtk+-2.0 --cflags) -fPIC
-LDFLAGS=$(shell pkg-config gtk+-2.0 --libs) -s -lglibivy
+LDFLAGS=$(shell pkg-config gtk+-2.0 --libs) -s -lglibivy -lm -lpcre
 
 
 ant_track : ant_track.c
@@ -129,9 +129,6 @@ ant_track : ant_track.c
 
 ant_track_pmm : ant_track_pmm.c
 	$(CC) $(CFLAGS) -g -o $@ $^ $(LDFLAGS)
-
-test_enose : test_enose.c sliding_plot.c
-	$(CC) $(CFLAGS) -g -o $@ $^ $(LDFLAGS) -lgtkdatabox
 
 actuators : actuators.c
 	$(CC) $(CFLAGS) -g -o $@ $^ $(LDFLAGS)

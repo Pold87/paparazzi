@@ -209,19 +209,19 @@ void trexton_periodic() {
     printf("STD: %f %f %f %f\n", std_buf[0], std_buf[1], std_buf[2], std_buf[3]);
   #endif
     
-  #else
-    struct image_t rgb_img, opp_img, std_img;
-    image_create(&rgb_img, 320, 240, IMAGE_RGB);
-    image_create(&img, 320, 240, IMAGE_YUV422);
+  /* #else */
+  /*   struct image_t rgb_img, opp_img, std_img; */
+  /*   image_create(&rgb_img, 320, 240, IMAGE_RGB); */
+  /*   image_create(&img, 320, 240, IMAGE_YUV422); */
 
-    char image_path[1024];
-    sprintf(image_path, "/home/pold/Documents/Internship/datasets/board_str8_test/%d.png", image_num);
+  /*   char image_path[1024]; */
+  /*   sprintf(image_path, "/home/pold/Documents/Internship/datasets/board_str8_test/%d.png", image_num); */
 
-    printf("%s", image_path);
-    fflush(stdout);
+  /*   printf("%s", image_path); */
+  /*   fflush(stdout); */
 
-    read_png_file(image_path, &rgb_img);
-    RGBtoYUV422(&rgb_img, &img);
+  /*   read_png_file(image_path, &rgb_img); */
+  /*   RGBtoYUV422(&rgb_img, &img); */
     
   #endif
 

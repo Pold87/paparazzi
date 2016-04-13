@@ -112,7 +112,7 @@ void ins_vectornav_event(void)
   // read message
   if (ins_vn.vn_packet.msg_available) {
     ins_vectornav_read_message();
-    ins_vn.vn_packet.msg_available = FALSE;
+    ins_vn.vn_packet.msg_available = false;
   }
 }
 
@@ -129,7 +129,7 @@ void ins_vectornav_init(void)
   // Initialize packet
   ins_vn.vn_packet.status = VNMsgSync;
   ins_vn.vn_packet.msg_idx = 0;
-  ins_vn.vn_packet.msg_available = FALSE;
+  ins_vn.vn_packet.msg_available = false;
   ins_vn.vn_packet.chksm_error = 0;
   ins_vn.vn_packet.hdr_error = 0;
   ins_vn.vn_packet.overrun_error = 0;
@@ -146,9 +146,9 @@ void ins_vectornav_init(void)
 
 #if USE_INS_NAV_INIT
   ins_init_origin_from_flightplan();
-  ins_vn.ltp_initialized = TRUE;
+  ins_vn.ltp_initialized = true;
 #else
-  ins_vn.ltp_initialized  = FALSE;
+  ins_vn.ltp_initialized  = false;
 #endif
 
   struct FloatEulers body_to_imu_eulers =
@@ -363,6 +363,7 @@ void ins_vectornav_propagate()
   ins_vn.lla_pos.lon = RadOfDeg((float)ins_vn.pos_lla[1]); // ins_impl.pos_lla[1] = lon
   ins_vn.lla_pos.alt = ((float)ins_vn.pos_lla[2]); // ins_impl.pos_lla[2] = alt
   LLA_BFP_OF_REAL(gps.lla_pos, ins_vn.lla_pos);
+  SetBit(gps.valid_fields, GPS_VALID_POS_LLA_BIT);
   stateSetPositionLla_i(&gps.lla_pos);
 
   // ECEF position
@@ -371,27 +372,13 @@ void ins_vectornav_propagate()
   struct EcefCoor_f ecef_vel;
   ecef_of_ned_point_f(&ecef_vel, &def, &ins_vn.vel_ned);
   ECEF_BFP_OF_REAL(gps.ecef_vel, ecef_vel);
+  SetBit(gps.valid_fields, GPS_VALID_VEL_ECEF_BIT);
 
   // ECEF velocity
   gps.ecef_pos.x = stateGetPositionEcef_i()->x;
   gps.ecef_pos.y = stateGetPositionEcef_i()->y;
   gps.ecef_pos.z = stateGetPositionEcef_i()->z;
-
-
-#if GPS_USE_LATLONG
-  // GPS UTM
-  /* Computes from (lat, long) in the referenced UTM zone */
-  struct UtmCoor_f utm_f;
-  utm_f.zone = nav_utm_zone0;
-  /* convert to utm */
-  //utm_of_lla_f(&utm_f, &lla_f);
-  utm_of_lla_f(&utm_f, &ins_vn.lla_pos);
-  /* copy results of utm conversion */
-  gps.utm_pos.east = (int32_t)(utm_f.east * 100);
-  gps.utm_pos.north = (int32_t)(utm_f.north * 100);
-  gps.utm_pos.alt = (int32_t)(utm_f.alt * 1000);
-  gps.utm_pos.zone = (uint8_t)nav_utm_zone0;
-#endif
+  SetBit(gps.valid_fields, GPS_VALID_POS_ECEF_BIT);
 
   // GPS Ground speed
   float speed = sqrt(ins_vn.vel_ned.x * ins_vn.vel_ned.x + ins_vn.vel_ned.y * ins_vn.vel_ned.y);
@@ -399,6 +386,7 @@ void ins_vectornav_propagate()
 
   // GPS course
   gps.course = (int32_t)(1e7 * (atan2(ins_vn.vel_ned.y, ins_vn.vel_ned.x)));
+  SetBit(gps.valid_fields, GPS_VALID_COURSE_BIT);
 
   // Because we have not HMSL data from Vectornav, we are using LLA-Altitude
   // as a workaround

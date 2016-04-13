@@ -47,7 +47,7 @@ PRINT_CONFIG_MSG("USE_INS_NAV_INIT defaulting to TRUE")
 
 struct InsGpsPassthrough {
   struct LtpDef_i  ltp_def;
-  bool_t           ltp_initialized;
+  bool           ltp_initialized;
 
   /* output LTP NED */
   struct NedCoor_i ltp_pos;
@@ -105,9 +105,9 @@ void ins_gps_passthrough_init(void)
   ins_gp.ltp_def.hmsl = NAV_ALT0;
   stateSetLocalOrigin_i(&ins_gp.ltp_def);
 
-  ins_gp.ltp_initialized = TRUE;
+  ins_gp.ltp_initialized = true;
 #else
-  ins_gp.ltp_initialized  = FALSE;
+  ins_gp.ltp_initialized  = false;
 #endif
 
   INT32_VECT3_ZERO(ins_gp.ltp_pos);
@@ -127,7 +127,7 @@ void ins_reset_local_origin(void)
   ins_gp.ltp_def.lla.alt = gps.lla_pos.alt;
   ins_gp.ltp_def.hmsl = gps.hmsl;
   stateSetLocalOrigin_i(&ins_gp.ltp_def);
-  ins_gp.ltp_initialized = TRUE;
+  ins_gp.ltp_initialized = true;
 }
 
 void ins_reset_altitude_ref(void)
@@ -144,6 +144,13 @@ void ins_reset_altitude_ref(void)
 
 
 #include "subsystems/abi.h"
+/** ABI binding for gps data.
+ * Used for GPS ABI messages.
+ */
+#ifndef INS_PT_GPS_ID
+#define INS_PT_GPS_ID GPS_MULTI_ID
+#endif
+PRINT_CONFIG_VAR(INS_PT_GPS_ID)
 static abi_event gps_ev;
 static void gps_cb(uint8_t sender_id __attribute__((unused)),
                    uint32_t stamp __attribute__((unused)),
@@ -173,5 +180,5 @@ static void gps_cb(uint8_t sender_id __attribute__((unused)),
 void ins_gps_passthrough_register(void)
 {
   ins_register_impl(ins_gps_passthrough_init);
-  AbiBindMsgGPS(ABI_BROADCAST, &gps_ev, gps_cb);
+  AbiBindMsgGPS(INS_PT_GPS_ID, &gps_ev, gps_cb);
 }

@@ -55,7 +55,7 @@
 #if LOG_INVARIANT_FILTER
 #include "sdLog.h"
 #include "subsystems/chibios-libopencm3/chibios_sdlog.h"
-bool_t log_started = FALSE;
+bool log_started = false;
 #endif
 
 /*------------- =*= Invariant Observers =*= -------------*
@@ -146,10 +146,10 @@ static const struct FloatVect3 A = { 0.f, 0.f, 9.81f };
 #define B ins_float_inv.mag_h
 
 /* barometer */
-bool_t ins_baro_initialized;
+bool ins_baro_initialized;
 
 /* gps */
-bool_t ins_gps_fix_once;
+bool ins_gps_fix_once;
 
 /* error computation */
 static inline void error_output(struct InsFloatInv *_ins);
@@ -182,8 +182,8 @@ static inline void init_invariant_state(void)
   ins_float_inv.meas.baro_alt = 0.0f;
 
   // init baro
-  ins_baro_initialized = FALSE;
-  ins_gps_fix_once = FALSE;
+  ins_baro_initialized = false;
+  ins_gps_fix_once = false;
 }
 
 #if SEND_INVARIANT_FILTER || PERIODIC_TELEMETRY
@@ -261,8 +261,8 @@ void ins_float_invariant_init(void)
   ins_float_inv.gains.rh   = INS_INV_RH;
   ins_float_inv.gains.sh   = INS_INV_SH;
 
-  ins_float_inv.is_aligned = FALSE;
-  ins_float_inv.reset = FALSE;
+  ins_float_inv.is_aligned = false;
+  ins_float_inv.reset = false;
 
 #if PERIODIC_TELEMETRY
   register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_INV_FILTER, send_inv_filter);
@@ -273,20 +273,9 @@ void ins_float_invariant_init(void)
 void ins_reset_local_origin(void)
 {
 #if INS_FINV_USE_UTM
-  struct UtmCoor_f utm;
-#ifdef GPS_USE_LATLONG
-  /* Recompute UTM coordinates in this zone */
-  struct LlaCoor_f lla;
-  LLA_FLOAT_OF_BFP(lla, gps.lla_pos);
-  utm.zone = (gps.lla_pos.lon / 1e7 + 180) / 6 + 1;
-  utm_of_lla_f(&utm, &lla);
-#else
-  utm.zone = gps.utm_pos.zone;
-  utm.east = gps.utm_pos.east / 100.0f;
-  utm.north = gps.utm_pos.north / 100.0f;
-#endif
+  struct UtmCoor_f utm = utm_float_from_gps(&gps, 0);
   // ground_alt
-  utm.alt = gps.hmsl / 1000.0f;
+  utm.alt = gps.hmsl  / 1000.0f;
   // reset state UTM ref
   stateSetLocalUtmOrigin_f(&utm);
 #else
@@ -316,45 +305,39 @@ void ins_reset_altitude_ref(void)
 #endif
 }
 
-void ins_float_invariant_align(struct Int32Rates *lp_gyro,
-                               struct Int32Vect3 *lp_accel,
-                               struct Int32Vect3 *lp_mag)
+void ins_float_invariant_align(struct FloatRates *lp_gyro,
+                               struct FloatVect3 *lp_accel,
+                               struct FloatVect3 *lp_mag)
 {
   /* Compute an initial orientation from accel and mag directly as quaternion */
   ahrs_float_get_quat_from_accel_mag(&ins_float_inv.state.quat, lp_accel, lp_mag);
 
   /* use average gyro as initial value for bias */
-  struct FloatRates bias0;
-  RATES_COPY(bias0, *lp_gyro);
-  RATES_FLOAT_OF_BFP(ins_float_inv.state.bias, bias0);
+  ins_float_inv.state.bias = *lp_gyro;
 
   /* push initial values to state interface */
   stateSetNedToBodyQuat_f(&ins_float_inv.state.quat);
 
   // ins and ahrs are now running
-  ins_float_inv.is_aligned = TRUE;
+  ins_float_inv.is_aligned = true;
 }
 
-void ins_float_invariant_propagate(struct Int32Rates* gyro, struct Int32Vect3* accel, float dt)
+void ins_float_invariant_propagate(struct FloatRates* gyro, struct FloatVect3* accel, float dt)
 {
   struct FloatRates body_rates;
 
   // realign all the filter if needed
   // a complete init cycle is required
   if (ins_float_inv.reset) {
-    ins_float_inv.reset = FALSE;
-    ins_float_inv.is_aligned = FALSE;
+    ins_float_inv.reset = false;
+    ins_float_inv.is_aligned = false;
     init_invariant_state();
   }
 
-  // fill command vector
-  struct Int32Rates gyro_meas_body;
-  struct Int32RMat *body_to_imu_rmat = orientationGetRMat_i(&ins_float_inv.body_to_imu);
-  int32_rmat_transp_ratemult(&gyro_meas_body, body_to_imu_rmat, gyro);
-  RATES_FLOAT_OF_BFP(ins_float_inv.cmd.rates, gyro_meas_body);
-  struct Int32Vect3 accel_meas_body;
-  int32_rmat_transp_vmult(&accel_meas_body, body_to_imu_rmat, accel);
-  ACCELS_FLOAT_OF_BFP(ins_float_inv.cmd.accel, accel_meas_body);
+  // fill command vector in body frame
+  struct FloatRMat *body_to_imu_rmat = orientationGetRMat_f(&ins_float_inv.body_to_imu);
+  float_rmat_transp_ratemult(&ins_float_inv.cmd.rates, body_to_imu_rmat, gyro);
+  float_rmat_transp_vmult(&ins_float_inv.cmd.accel, body_to_imu_rmat, accel);
 
   // update correction gains
   error_output(&ins_float_inv);
@@ -397,7 +380,7 @@ void ins_float_invariant_propagate(struct Int32Rates* gyro, struct Int32Vect3* a
       // log file header
       sdLogWriteLog(pprzLogFile,
                     "p q r ax ay az gx gy gz gvx gvy gvz mx my mz b qi qx qy qz bp bq br vx vy vz px py pz hb as\n");
-      log_started = TRUE;
+      log_started = true;
     } else {
       sdLogWriteLog(pprzLogFile,
                     "%.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f\n",
@@ -441,13 +424,14 @@ void ins_float_invariant_update_gps(struct GpsState *gps_s)
 {
 
   if (gps_s->fix >= GPS_FIX_3D && ins_float_inv.is_aligned) {
-    ins_gps_fix_once = TRUE;
+    ins_gps_fix_once = true;
 
 #if INS_FINV_USE_UTM
     if (state.utm_initialized_f) {
+      struct UtmCoor_f utm = utm_float_from_gps(gps_s, nav_utm_zone0);
       // position (local ned)
-      ins_float_inv.meas.pos_gps.x = (gps_s->utm_pos.north / 100.0f) - state.utm_origin_f.north;
-      ins_float_inv.meas.pos_gps.y = (gps_s->utm_pos.east / 100.0f) - state.utm_origin_f.east;
+      ins_float_inv.meas.pos_gps.x = utm.north - state.utm_origin_f.north;
+      ins_float_inv.meas.pos_gps.y = utm.east - state.utm_origin_f.east;
       ins_float_inv.meas.pos_gps.z = state.utm_origin_f.alt - (gps_s->hmsl / 1000.0f);
       // speed
       ins_float_inv.meas.speed_gps.x = gps_s->ned_vel.x / 100.0f;
@@ -489,11 +473,11 @@ void ins_float_invariant_update_baro(float pressure)
     // test stop condition
     if (fabs(alpha) < 0.005f) {
       ins_qfe = baro_moy;
-      ins_baro_initialized = TRUE;
+      ins_baro_initialized = true;
     }
     if (i == 250) {
       ins_qfe = pressure;
-      ins_baro_initialized = TRUE;
+      ins_baro_initialized = true;
     }
     i++;
   } else { /* normal update with baro measurement */
@@ -504,7 +488,7 @@ void ins_float_invariant_update_baro(float pressure)
 // assume mag is dead when values are not moving anymore
 #define MAG_FROZEN_COUNT 30
 
-void ins_float_invariant_update_mag(struct Int32Vect3* mag)
+void ins_float_invariant_update_mag(struct FloatVect3* mag)
 {
   static uint32_t mag_frozen_count = MAG_FROZEN_COUNT;
   static int32_t last_mx = 0;
@@ -518,11 +502,9 @@ void ins_float_invariant_update_mag(struct Int32Vect3* mag)
     }
   } else {
     // values are moving
-    struct Int32RMat *body_to_imu_rmat = orientationGetRMat_i(&ins_float_inv.body_to_imu);
-    struct Int32Vect3 mag_meas_body;
+    struct FloatRMat *body_to_imu_rmat = orientationGetRMat_f(&ins_float_inv.body_to_imu);
     // new values in body frame
-    int32_rmat_transp_vmult(&mag_meas_body, body_to_imu_rmat, mag);
-    MAGS_FLOAT_OF_BFP(ins_float_inv.meas.mag, mag_meas_body);
+    float_rmat_transp_vmult(&ins_float_inv.meas.mag, body_to_imu_rmat, mag);
     // reset counter
     mag_frozen_count = MAG_FROZEN_COUNT;
   }
