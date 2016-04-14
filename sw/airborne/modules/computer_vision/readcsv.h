@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include "lib/vision/image.h"
-#include <particle_filter.h>
+#include "../particle_filter/src/particle_filter.h"
 
 #include "trexton.h"
 

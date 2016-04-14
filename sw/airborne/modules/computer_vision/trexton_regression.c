@@ -17,12 +17,12 @@
 #include "subsystems/abi.h"
 
 #include "opticflow_module.h"
-#include "opticflow/edge_flow.h"
+#include <lib/vision/edge_flow.h>
 #include "opticflow/opticflow_calculator.h"
 
-#include "floatfann.h"
+/* #include "floatfann.h" */
 
-bool_t gps_available;   ///< Is set to TRUE when a new REMOTE_GPS packet is received and parsed
+bool gps_available;   ///< Is set to TRUE when a new REMOTE_GPS packet is received and parsed
 
 /* Histogram paths a, statistics, robotics, vision, biology, neuroscience, artificial intelligence (AI) and cognitive science. However, many of the most innovative and useful probabilistic models published by the AI, machine learning, and statistics community far outstrip the representational capacity of graphical models and associated inference techniques. Models are communicated using a mix of natural language, pseudo code, and mathematical formulae and solved using special purpose, one-off inference methods. Rather than precise specifications suitable for automatic inference, graphical models typically serve as coarse, high-level descriptions, eliding critical aspects such as fine-grained independence, abstraction and recursion.
 PROBABILISTIC PROGRAMMING LANGUAGES aim to close this representational gap, unifying general purpond settings */ 
@@ -58,7 +58,7 @@ struct opticflow_t opticflow;                      ///< Opticflow calculations
 static struct opticflow_result_t opticflow_result; ///< The opticflow result
 static struct opticflow_state_t opticflow_state;   ///< State of the drone to communicate with the opticflow
 static pthread_mutex_t opticflow_mutex;            ///< Mutex lock fo thread safety
-static bool_t opticflow_got_result; ///< When we have an optical flow calculation
+static bool opticflow_got_result; ///< When we have an optical flow calculation
 
 static struct UdpSocket video_sock; /* UDP socket for sending RTP video */
 
@@ -335,8 +335,8 @@ void trexton_periodic() {
     // Do the optical flow calculation
     struct opticflow_result_t temp_result;
 
-    edgeflow_calc_frame(&opticflow, &temp_state, &img, &temp_result);
-    /* opticflow_calc_frame(&opticflow, &temp_state, &img, &temp_result); */
+    /* edgeflow_calc_frame(&opticflow, &temp_state, &img, &temp_result); */
+    opticflow_calc_frame(&opticflow, &temp_state, &img, &temp_result);
     printf("\n edgeflow result: x:%d y:%d\n", temp_result.flow_x, temp_result.flow_y);
 // Copy the result if finished
     pthread_mutex_lock(&opticflow_mutex);
@@ -516,30 +516,30 @@ struct measurement linear_regression_prediction(int texton_hist[]) {
   return pos;
 }
 
-struct measurement predict_fann(int hist[], int size_hist) {
+/* struct measurement predict_fann(int hist[], int size_hist) { */
 
-  fann_type *calc_out;
-  fann_type input[size_hist];
+/*   fann_type *calc_out; */
+/*   fann_type input[size_hist]; */
 
-  struct fann *ann;
-  ann = fann_create_from_file("treXton_float.net");
+/*   struct fann *ann; */
+/*   ann = fann_create_from_file("treXton_float.net"); */
 
-  int i;
-  /* Copy histogram to fann style histogram; possible TODO: do it directly when extracting the histogram */
-  for (i = 0; i < size_hist; i++) {
-       input[i] = hist[i];
-    }
+/*   int i; */
+/*   /\* Copy histogram to fann style histogram; possible TODO: do it directly when extracting the histogram *\/ */
+/*   for (i = 0; i < size_hist; i++) { */
+/*        input[i] = hist[i]; */
+/*     } */
 
-    calc_out = fann_run(ann, input);
+/*     calc_out = fann_run(ann, input); */
 
-    struct  measurement pos;
-    pos.x = calc_out[0] * 1500;
-    pos.y = calc_out[1] * 1500;
-    pos.dist = 0;
+/*     struct  measurement pos; */
+/*     pos.x = calc_out[0] * 1500; */
+/*     pos.y = calc_out[1] * 1500; */
+/*     pos.dist = 0; */
 
-return pos;
+/* return pos; */
 
-}
+/* } */
 
 
 /* int main() */

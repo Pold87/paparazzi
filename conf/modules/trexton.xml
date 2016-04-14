@@ -23,8 +23,8 @@
     <!-- <raw>PUBLISH_TREXTON=$(shell ftp 192.168.1.1 &lt; /home/pold/paparazzi/sw/airborne/modules/computer_vision/publish_treXton_csvs)</raw> -->
     <!-- Include the needed Computer Vision files -->
 
-    <define name="modules/fann/src/include" type="include"/>
-    <file name="floatfann.c" dir="modules/fann/src"/>
+    <!-- <define name="modules/fann/src/include" type="include"/> -->
+    <!-- <file name="floatfann.c" dir="modules/fann/src"/> -->
 
     <file name="cv.c"/>
     <file name="readcsv.c"/>

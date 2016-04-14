@@ -3,7 +3,7 @@
 #include "csv.h"
 #include <errno.h>
 #include <math.h>
-#include <particle_filter.h>
+#include "../particle_filter/src/particle_filter.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

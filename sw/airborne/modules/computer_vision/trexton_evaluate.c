@@ -14,7 +14,7 @@
 #include "udp_socket.h"
 
 #include "opticflow_module.h"
-#include "opticflow/edge_flow.h"
+#include <lib/vision/edge_flow.h>
 #include "opticflow/opticflow_calculator.h"
 
 #include "floatfann.h"

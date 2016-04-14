@@ -1,60 +1,44 @@
 /*
- * edge_flow.c
+ * Copyright (C) 2016 Kimberly McGuire <k.n.mcguire@tudelft.nl
  *
- *  Created on: Feb 22, 2016
- *      Author: knmcguire
+ * This file is part of Paparazzi.
+ *
+ * Paparazzi is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * Paparazzi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Paparazzi; see the file COPYING.  If not, see
+ * <http://www.gnu.org/licenses/>.
  */
-#include <opticflow/edge_flow.h>
-
-// Local functions of the EDGEFLOW algorithm
-void draw_edgeflow_img(struct image_t *img, struct edge_flow_t edgeflow, struct edgeflow_displacement_t displacement,
-                       int32_t *edge_hist_x);
-void calculate_edge_histogram(struct image_t *img, int32_t edge_histogram[],
-                              char direction, uint16_t edge_threshold);
-void calculate_edge_displacement(int32_t *edge_histogram, int32_t *edge_histogram_prev, int32_t *displacement,
-                                 uint16_t size,
-                                 uint8_t window, uint8_t disp_range, int32_t der_shift);
-
-// Local assisting functions (only used here)
-// TODO: find a way to incorperate/find these functions in paparazzi
-static uint32_t timeval_diff2(struct timeval *starttime, struct timeval *finishtime);
-static uint32_t getMinimum(uint32_t *a, uint32_t n);
-void line_fit(int32_t *displacement, int32_t *divergence, int32_t *flow, uint32_t size, uint32_t border,
-              uint16_t RES);
 
 /**
- * Run the optical flow with EDGEFLOW on a new image frame
- * @param[in] *opticflow The opticalflow structure that keeps track of previous images
- * @param[in] *state The state of the drone
- * @param[in] *img The image frame to calculate the optical flow from
- * @param[out] *result The optical flow result
+ * @file modules/computer_vision/lib/vision/edge_flow.ch
+ * @brief calculate optical flow with EdgeFlow
+ *
+ * Edge-histogram matching, implementation by K. N. McGuire
+ * Publication: Local Histogram Matching for Efficient Optical Flow Computation Applied to Velocity Estimation on Pocket Drones
+ * by K.N. McGuire et al. (2016), ICRA 2016
  */
-void edgeflow_calc_frame(struct opticflow_t *opticflow, struct opticflow_state_t *state, struct image_t *img,
-                         struct opticflow_result_t *result)
+
+#include <lib/vision/edge_flow.h>
+/**
+ * Calc_previous_frame_nr; adaptive Time Horizon
+ * @param[in] *opticflow The opticalflow structure
+ * @param[in] *result The optical flow result
+ * @param[in] *current_frame_nr: The current frame number of the circular array of the edge_hist struct
+ * @param[in] *previous_frame_offset: previous frame offset of how far the method should compare the edgehistogram
+ * @param[out] *previous_frame_nr: previous frame index of the edgehist struct
+ */
+void  calc_previous_frame_nr(struct opticflow_result_t *result, struct opticflow_t *opticflow, uint8_t current_frame_nr,
+                             uint8_t *previous_frame_offset, uint8_t *previous_frame_nr)
 {
-
-  // Define Static Variables
-  static struct edge_hist_t edge_hist[MAX_HORIZON];
-  static uint8_t current_frame_nr = 0;
-  static struct edge_flow_t edgeflow;
-  static uint8_t previous_frame_offset[2] = {1, 1};
-
-  // Define Normal variables
-  struct edgeflow_displacement_t displacement;
-  uint8_t disp_range = DISP_RANGE_MAX;
-  uint16_t RES = 100;
-
-  // Calculate current frame's edge histogram
-  int32_t *edge_hist_x = edge_hist[current_frame_nr].x;
-  int32_t *edge_hist_y = edge_hist[current_frame_nr].y;
-  calculate_edge_histogram(img, edge_hist_x, 'x', 0);
-  calculate_edge_histogram(img, edge_hist_y, 'y', 0);
-
-  // Copy frame time and angles of image to calculated edge histogram
-  memcpy(&edge_hist[current_frame_nr].frame_time, &img->ts, sizeof(struct timeval));
-  edge_hist[current_frame_nr].pitch = state->theta;
-  edge_hist[current_frame_nr].roll = state->phi;
-
   // Adaptive Time Horizon:
   // if the flow measured in previous frame is small,
   // the algorithm will choose an frame further away back from the
@@ -62,10 +46,10 @@ void edgeflow_calc_frame(struct opticflow_t *opticflow, struct opticflow_state_t
   if (MAX_HORIZON > 2) {
 
     uint32_t flow_mag_x, flow_mag_y;
-    flow_mag_x = abs(edgeflow.flow_x);
-    flow_mag_y = abs(edgeflow.flow_y);
+    flow_mag_x = abs(result->flow_x);
+    flow_mag_y = abs(result->flow_y);
     uint32_t min_flow = 3;
-    uint32_t max_flow = disp_range * RES - 3 * RES;
+    uint32_t max_flow = opticflow->search_distance - 3;
 
     uint8_t previous_frame_offset_x = previous_frame_offset[0];
     uint8_t previous_frame_offset_y = previous_frame_offset[1];
@@ -88,81 +72,10 @@ void edgeflow_calc_frame(struct opticflow_t *opticflow, struct opticflow_state_t
   }
 
   //Wrap index previous frame offset from current frame nr.
-  uint8_t previous_frame_x = (current_frame_nr - previous_frame_offset[0] + MAX_HORIZON) %
-                             MAX_HORIZON;
-  uint8_t previous_frame_y = (current_frame_nr - previous_frame_offset[1] + MAX_HORIZON) %
-                             MAX_HORIZON;
-
-  //Select edge histogram from the previous frame nr
-  int32_t *prev_edge_histogram_x = edge_hist[previous_frame_x].x;
-  int32_t *prev_edge_histogram_y = edge_hist[previous_frame_y].y;
-
-  //Calculate the corrosponding derotation of the two frames
-  int16_t der_shift_x = -(int16_t)((edge_hist[previous_frame_x].roll - edge_hist[current_frame_nr].roll) *
-                                   (float)img->w / (OPTICFLOW_FOV_W));
-  int16_t der_shift_y = -(int16_t)((edge_hist[previous_frame_x].pitch - edge_hist[current_frame_nr].pitch) *
-                                   (float)img->h / (OPTICFLOW_FOV_H));
-
-  // Estimate pixel wise displacement of the edge histograms for x and y direction
-
-  uint16_t size_w = img->w;
-  uint16_t size_h = img->h;  
-  struct timeval my_ts = img->ts;
-
-  calculate_edge_displacement(edge_hist_x, prev_edge_histogram_x,
-                              displacement.x, img->w,
-                              opticflow->window_size, disp_range,  der_shift_x);
-
-
-  calculate_edge_displacement(edge_hist_y, prev_edge_histogram_y,
-                              displacement.y, img->h,
-                              opticflow->window_size, disp_range, der_shift_y);
-  
-
-  // Fit a line on the pixel displacement to estimate
-  // the global pixel flow and divergence (RES is resolution)
-  line_fit(displacement.x, &edgeflow.div_x,
-           &edgeflow.flow_x, img->w,
-           opticflow->window_size + disp_range, RES);
-  line_fit(displacement.y, &edgeflow.div_y,
-           &edgeflow.flow_y, img->h,
-           opticflow->window_size + disp_range, RES);
-
-  // Save Resulting flow in results
-  result->flow_x = (int16_t)edgeflow.flow_x / (previous_frame_offset[0] * RES);
-
-  result->flow_y = (int16_t)edgeflow.flow_y / (previous_frame_offset[1] * RES);
-
-  // VELOCITY //
-
-  //Estimate fps per direction
-  float fps_x = 0;
-  float fps_y = 0;
-  float time_diff_x = (float)(timeval_diff2(&edge_hist[previous_frame_x].frame_time, &my_ts)) / 1000.;
-  float time_diff_y = (float)(timeval_diff2(&edge_hist[previous_frame_y].frame_time, &my_ts)) / 1000.;
-  fps_x = 1 / (time_diff_x);
-  fps_y = 1 / (time_diff_y);
-  result->fps = fps_x;
-
-  //Calculate velocity
-  float vel_x = edgeflow.flow_x * fps_x * state->agl * OPTICFLOW_FOV_W / (size_w * RES);
-  float vel_y = edgeflow.flow_y * fps_y * state->agl * OPTICFLOW_FOV_H / (size_h * RES);
-  result->vel_x = vel_x;
-  result->vel_y = vel_y;
-
-  // Rotate velocities from camera frame coordinates to body coordinates.
-  // IMPORTANT since these values are used for control! This the case on the ARDrone and bebop, but on other systems this might be different!
-  result->vel_body_x = vel_y;
-  result->vel_body_y = - vel_x;
-
-#if OPTICFLOW_DEBUG && OPTICFLOW_SHOW_FLOW
-  draw_edgeflow_img(img, edgeflow, displacement, edge_hist_x);
-#endif
-  // Increment and wrap current time frame
-  current_frame_nr = (current_frame_nr + 1) % MAX_HORIZON;
-
-  /* printf("NO"); */
-  /* fflush(stdout); */
+  previous_frame_nr[0] = (current_frame_nr - previous_frame_offset[0] + MAX_HORIZON) %
+                         MAX_HORIZON;
+  previous_frame_nr[1] = (current_frame_nr - previous_frame_offset[1] + MAX_HORIZON) %
+                         MAX_HORIZON;
 }
 
 /**
@@ -223,7 +136,7 @@ void calculate_edge_histogram(struct image_t *img, int32_t edge_histogram[],
     // set values that are not visited
     edge_histogram[0] = edge_histogram[image_height - 1] = 0;
     for (y = 1; y < image_height - 1; y++) {
-    edge_histogram[y] = 0;
+      edge_histogram[y] = 0;
       for (x = 0; x < image_width; x++) {
         sobel_sum = 0;
 
@@ -256,13 +169,6 @@ void calculate_edge_displacement(int32_t *edge_histogram, int32_t *edge_histogra
                                  uint16_t size,
                                  uint8_t window, uint8_t disp_range, int32_t der_shift)
 {
-
-
-  printf("image size edge_displacement is %d", size);
-  /* printf("image h is %d", img->h); */
-  fflush(stdout);
-  
-
   int32_t c = 0, r = 0;
   uint32_t x = 0;
   uint32_t SAD_temp[2 * DISP_RANGE_MAX + 1]; // size must be at least 2*D + 1
@@ -290,12 +196,9 @@ void calculate_edge_displacement(int32_t *edge_histogram, int32_t *edge_histogra
   if (border[0] >= border[1] || abs(der_shift) >= 10) {
     SHIFT_TOO_FAR = 1;
   }
-
-
   {
     // TODO: replace with arm offset subtract
     for (x = border[0]; x < border[1]; x++) {
-      /* printf("x is %d, size is %d", x, size);  */
       displacement[x] = 0;
       for (c = -D; c <= D; c++) {
         SAD_temp[c + D] = 0;
@@ -319,7 +222,7 @@ void calculate_edge_displacement(int32_t *edge_histogram, int32_t *edge_histogra
  * @param[in] *n The size of the array
  * @return The index of the smallest value of the array
  */
-static uint32_t getMinimum(uint32_t *a, uint32_t n)
+uint32_t getMinimum(uint32_t *a, uint32_t n)
 {
   uint32_t i;
   uint32_t min_ind = 0;
@@ -336,18 +239,6 @@ static uint32_t getMinimum(uint32_t *a, uint32_t n)
   return min_ind;
 }
 
-/**
- * Calculate the difference from start till finish
- * @param[in] *starttime The start time to calculate the difference from
- * @param[in] *finishtime The finish time to calculate the difference from
- */
-static uint32_t timeval_diff2(struct timeval *starttime, struct timeval *finishtime)
-{
-  uint32_t msec;
-  msec = (finishtime->tv_sec - starttime->tv_sec) * 1000;
-  msec += (finishtime->tv_usec - starttime->tv_usec) / 1000;
-  return msec;
-}
 
 /**
  * Fits a linear model to an array with pixel displacements with least squares
@@ -441,5 +332,22 @@ void draw_edgeflow_img(struct image_t *img, struct edge_flow_t edgeflow, struct 
   image_draw_line(img, &point1_extra, &point2_extra);
 }
 
+/**
+ * getAmountPeaks, calculates the amount of peaks in a edge histogram
+ * @param[in] *edgehist Horizontal edge_histogram
+ * @param[in] thres The threshold from which a peak is considered significant peak or not
+ * @param[in] size  Size of the array
+ * @param[return] amount of peaks
+ */
+uint32_t getAmountPeaks(int32_t *edgehist, uint32_t thres, int32_t size)
+{
+  uint32_t  amountPeaks = 0;
+  uint32_t i = 0;
 
-
+  for (i = 1; i < size + 1;  i ++) {
+    if (edgehist[i - 1] < edgehist[i] && edgehist[i] > edgehist[i + 1] && edgehist[i] > thres) {
+      amountPeaks ++;
+    }
+  }
+  return amountPeaks;
+}

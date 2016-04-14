@@ -27,7 +27,7 @@
 
 /* The video device */
 #ifndef TREXTON_DEVICE
-#define TREXTON_DEVICE /dev/video2      ///< The video device
+#define TREXTON_DEVICE /dev/video0      ///< The video device
 #endif
 
 /* The video device size (width, height) */
@@ -44,7 +44,7 @@
 
 #define TREXTON_DEBUG true
 
-#define VIEWVIDEO_HOST 192.168.1.255
+#define VIEWVIDEO_HOST 192.168.42.255
 #define VIEWVIDEO_PORT_OUT 5000
 #define VIEWVIDEO_BROADCAST true
 

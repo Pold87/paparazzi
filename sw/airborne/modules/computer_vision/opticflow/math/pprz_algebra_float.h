@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-#include "pprz_algebra.h"
+#include "../../../../math/pprz_algebra.h"
 
 #include <math.h>
 #include <float.h> // for FLT_MIN

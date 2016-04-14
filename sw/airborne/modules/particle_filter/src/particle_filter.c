@@ -4,7 +4,7 @@ Particle filter without control input
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <particle_filter.h>
+#include "particle_filter.h"
 #include "random_number_gen.h"
 #include <math.h>
 #include <time.h>

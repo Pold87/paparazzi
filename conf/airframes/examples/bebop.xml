@@ -18,7 +18,7 @@
     <subsystem name="motor_mixing"/>
     <subsystem name="actuators" type="bebop"/>
     <subsystem name="imu" type="bebop"/>
-    <subsystem name="gps" type="furuno"/>
+    <subsystem name="gps" type="datalink"/>
     <subsystem name="stabilization" type="int_quat"/>
     <subsystem name="ahrs"          type="float_mlkf"/>
     <subsystem name="ins" type="extended"/>
@@ -28,6 +28,8 @@
     <load name="geo_mag.xml"/>
     <load name="air_data.xml"/>
     <load name="send_imu_mag_current.xml"/>
+    <load name="trexton.xml"/>
+    <!-- <load name="cv_opticflow.xml"/> -->
     <!--load name="logger_file.xml">
       <define name="FILE_LOGGER_PATH" value="/data/ftp/internal_000"/>
     </load-->
